@@ -1,10 +1,8 @@
 package com.bosch.sast.sudoku.validator.repository;
 
 import com.bosch.sast.sudoku.validator.model.Board;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
-public interface SudokuRepository extends CrudRepository<Board, Long> {
-    Optional<Board> findById(Long id);
+public interface SudokuRepository
+        extends JpaRepository<Board, Long> {
 }

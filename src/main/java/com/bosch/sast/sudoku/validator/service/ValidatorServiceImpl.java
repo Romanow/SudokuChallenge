@@ -10,6 +10,7 @@ import com.bosch.sast.sudoku.validator.service.validators.SizeValidator;
 import com.bosch.sast.sudoku.validator.service.validators.SubGridValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -44,12 +45,14 @@ public class ValidatorServiceImpl
     }
 
     @Override
+    @Transactional
     public BoardDTO saveBoard(NewBoardDTO dto) {
         final var board = sudokuRepository.save(boardMapper.toEntity(dto));
         return boardMapper.toDto(board);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BoardDTO getBoard(long boardId) {
         var board = sudokuRepository
                 .findById(boardId)

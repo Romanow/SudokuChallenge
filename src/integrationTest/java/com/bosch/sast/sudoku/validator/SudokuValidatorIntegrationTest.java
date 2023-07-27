@@ -33,11 +33,9 @@ class SudokuValidatorIntegrationTest {
             {1, 2, 3, 4, 5, 6, 7, 8, 9},
             {9, 8, 7, 1, 2, 3, 4, 5, 6},
             {4, 5, 6, 0, 0, 0, 0, 0, 0},
-
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
-
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0}};
@@ -46,11 +44,9 @@ class SudokuValidatorIntegrationTest {
             {1, 2, 3, 4, 5, 6, 7, 8, 9},
             {9, 8, 7, 1, 2, 3, 4, 5, 6},
             {4, 5, 6, 0, 0, 0, 0, 0, 0},
-
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
-
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {9, 0, 0, 0, 0, 0, 0, 0, 0}};
@@ -74,17 +70,26 @@ class SudokuValidatorIntegrationTest {
 
     @Test
     void retrievingAJustUploadedBoard() throws Exception {
-        long id = upload(THE_ONE_BOARD_GRID);
-        mockMvc.perform(get("/board/{id}", id))
+        long boardId = upload(THE_ONE_BOARD_GRID);
+        mockMvc.perform(get("/board/{boardId}", boardId))
                .andDo(print())
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.id").value(id));
+               .andExpect(jsonPath("$.id").value(boardId));
+    }
+
+    @Test
+    void boardNotFound() throws Exception {
+        final var boardId = 1000;
+        mockMvc.perform(get("/board/{boardId}", boardId))
+               .andDo(print())
+               .andExpect(status().isNotFound())
+               .andExpect(jsonPath("$.message").value("Board '" + boardId + "' not found"));
     }
 
     @Test
     void theValidBoardIsValid() throws Exception {
-        long id = upload(THE_ONE_BOARD_GRID);
-        mockMvc.perform(get("/board/{id}/isvalid", id))
+        long boardId = upload(THE_ONE_BOARD_GRID);
+        mockMvc.perform(get("/board/{boardId}/isvalid", boardId))
                .andDo(print())
                .andExpect(status().isOk())
                .andExpect(content().string("true"));
@@ -92,8 +97,8 @@ class SudokuValidatorIntegrationTest {
 
     @Test
     void theBadBoardIsInvalid() throws Exception {
-        long id = upload(THE_BAD_BOARD_GRID);
-        mockMvc.perform(get("/board/{id}/isvalid", id))
+        long boardId = upload(THE_BAD_BOARD_GRID);
+        mockMvc.perform(get("/board/{boardId}/isvalid", boardId))
                .andDo(print())
                .andExpect(status().isOk())
                .andExpect(content().string("false"));
