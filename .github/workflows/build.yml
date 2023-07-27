@@ -15,6 +15,5 @@ jobs:
 
       - name: Install gradle
         uses: gradle/gradle-build-action@v2
-
-      - name: Build project
-        run: gradle clean build
+        with:
+          arguments: build
